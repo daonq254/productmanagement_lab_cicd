@@ -48,15 +48,16 @@ jobs:
           chown ubuntu:ubuntu /home/ubuntu/product_project/product_source/product-management.jar
 
   deploy:
+    name: Deploy Project
+    runs-on: self-hosted
+    needs: build
+    
     env:
       APP_PORT: 8085
       SPRING_DATASOURCE_URL: "localhost:3306/productmanagement?createDatabaseIfNotExist=true"
       SPRING_DATASOURCE_USERNAME: "productuser"
       SPRING_DATASOURCE_PASSWORD: "666888!2025"
       
-    runs-on: self-hosted
-    needs: build
-
     steps:
       - name: Stop old process if running
         run: |

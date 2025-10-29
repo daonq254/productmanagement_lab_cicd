@@ -73,6 +73,6 @@ jobs:
           -Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME} \
           -Dspring.datasource.password=${SPRING_DATASOURCE_PASSWORD} \
           -jar product-management.jar \
-          > app.log 2>&1 < /dev/null &
-          sleep 2
+          > app.log 2>&1 < /dev/null & disown
+          sleep 3
           pgrep -f 'product-management.jar' || { echo "App failed to start"; tail -n 100 app.log || true; exit 1; }

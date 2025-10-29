@@ -25,7 +25,13 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-
+          
+      # Cấp quyền thực thi cho file mvn
+      - name: Ensure mvnw executable
+        run: |
+          cd ${{ github.workspace }}
+          chmod +x mvnw
+           
       # Build NGAY TRONG workspace của runner
       - name: Build with Maven
         working-directory: ${{ github.workspace }}

@@ -52,28 +52,9 @@ jobs:
     runs-on: self-hosted
     needs: build
     
-    env:
-      APP_PORT: 8085
-      SPRING_DATASOURCE_URL: "localhost:3306/productmanagement?createDatabaseIfNotExist=true"
-      SPRING_DATASOURCE_USERNAME: "productuser"
-      SPRING_DATASOURCE_PASSWORD: "666888!2025"
-      
     steps:
-      - name: Stop old process if running
+      - name: Restart product-app service
         run: |
-          echo "Stopping old process..."
-          pgrep -f "product-management.jar" && pkill -f "product-management.jar" || echo "No process to stop"
-
-      - name: Run Spring Boot app
-        run: |
-          echo "Starting Spring Boot app..."
-          cd /home/ubuntu/product_project/product_source
-          setsid nohup /usr/bin/java \
-          -Dserver.port="${APP_PORT}" \
-          -Dspring.datasource.url=${SPRING_DATASOURCE_URL} \
-          -Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME} \
-          -Dspring.datasource.password=${SPRING_DATASOURCE_PASSWORD} \
-          -jar product-management.jar \
-          > app.log 2>&1 < /dev/null & disown
-          sleep 3
-          pgrep -f 'product-management.jar' || { echo "App failed to start"; tail -n 100 app.log || true; exit 1; }
+          sudo systemctl daemon-reload
+          sudo systemctl restart product-app
+          sudo systemctl status product-app --no-pager

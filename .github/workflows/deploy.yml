@@ -67,10 +67,12 @@ jobs:
         run: |
           echo "Starting Spring Boot app..."
           cd /home/ubuntu/product_project/product_source
-          nohup java -jar \
-              -Dserver.port=${APP_PORT} \
-              -Dspring.datasource.url="${SPRING_DATASOURCE_URL}" \
-              -Dspring.datasource.username="${SPRING_DATASOURCE_USERNAME}" \
-              -Dspring.datasource.password="${SPRING_DATASOURCE_PASSWORD}" \
-              product-management.jar > app.log 2>&1 &
-            echo "App started on port ${APP_PORT}"
+          setsid nohup /usr/bin/java \
+          -Dserver.port="${APP_PORT}" \
+          -Dspring.datasource.url=${SPRING_DATASOURCE_URL} \
+          -Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME} \
+          -Dspring.datasource.password=${SPRING_DATASOURCE_PASSWORD} \
+          -jar product-management.jar \
+          > app.log 2>&1 < /dev/null &
+          sleep 2
+          pgrep -f 'product-management.jar' || { echo "App failed to start"; tail -n 100 app.log || true; exit 1; }
